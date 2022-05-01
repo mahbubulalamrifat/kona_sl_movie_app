@@ -38,7 +38,7 @@ class IndexController extends Controller
 
 
     //registration
-    public function registration(Request $request){
+    public function register(Request $request){
             
         // Validations
         request()->validate([

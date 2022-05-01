@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+import Dashboard from '../pages/dashboard.vue'
+    
 import Trending from '../pages/category/trending.vue'
 import Toprated from '../pages/category/toprated.vue'
 import Upcoming from '../pages/category/upcoming.vue'
@@ -12,10 +14,19 @@ import er404 from '../pages/common/404.vue'
 
 const router = new VueRouter({
     mode: 'history',
-    routes : [
-
+    routes: [
+        
         { 
             path: '/', 
+            component: Dashboard,
+            name: 'Dashboard',
+            meta:{
+                title: 'Movie for Enthusias -- Trending',
+            },   
+        },
+
+        { 
+            path: '/trending', 
             component: Trending,
             name: 'Trending',
             meta:{

@@ -1,11 +1,15 @@
 <template>
     <div>
         <div class="d-flex flex-wrap jsutify-content-between justify-content-center">
+            
             <div v-for="genre in genres" :key="genre.id">
-                <v-btn small outlined rounded color="red" class="mx-2 my-2" @click="getResultsByGenre(genre.id)">
-                    {{genre.name}}
-                </v-btn>
+                <v-btn-toggle multiple class="mx-2 my-2" outlined rounded color="red">
+                    <v-btn small outlined rounded class="error--text" @click="getResultsByGenre(genre.id)">
+                        {{genre.name}}
+                    </v-btn>
+                </v-btn-toggle>
             </div>
+            
         </div>
     </div>
 </template>

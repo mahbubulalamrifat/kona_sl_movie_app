@@ -4,18 +4,21 @@
         <genre-component></genre-component>
 
         <v-row v-scroll="onScroll">
-            <v-col cols="3" lg="3" md="3" v-for="movies in results" :key="movies.id">
-                <v-card @click="showDetails(movies)">
+            <v-col cols="12" lg="3" md="6" sm="6" v-for="movies in resultsTrending" :key="movies.id">
+                <v-skeleton-loader class="mx-auto" type="image, card-heading, list-item, list-item-three-line"
+                    v-if="dataFetching == true"></v-skeleton-loader>
+                <v-card @click="showDetails(movies)" v-else>
                     <v-img :src="imagePath+movies.poster_path" height="250"></v-img>
 
                     <v-card-subtitle class="d-flex justify-content-between align-items-center">
-                        <span class="font-weight-bold"> {{movies.title}} </span> <span class="primary--text"> {{movies.release_date}} </span>
+                        <span class="font-weight-bold"> {{movies.title}} </span> <span class="primary--text">
+                            {{movies.release_date}} </span>
                     </v-card-subtitle>
 
                     <v-card-text>
                         <div class="d-flex align-items-center">
-                            <v-rating :value="movies.vote_average" color="amber" length="10" dense half-increments readonly
-                                size="14"></v-rating>
+                            <v-rating :value="movies.vote_average" color="amber" length="10" dense half-increments
+                                readonly size="14"></v-rating>
 
                             <div class="grey--text ms-4">
                                 {{movies.vote_average}} ({{movies.vote_count}})
@@ -42,47 +45,63 @@
 </template>
 
 <script>
-import genre from "../genre.vue"
+    import genre from "../genre.vue"
     export default {
-        components:{
-            "genre-component":genre,
+        components: {
+            "genre-component": genre,
+        },
+        data() {
+            return {
+                results: [],
+            }
         },
 
         methods: {
 
-            onScroll(){
+            onScroll() {
 
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                    
+                if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 50) {
                     this.page += 1;
-                    this.getMovie();
+                    this.getMovieTrending();
+
                 }
 
-            },
-
-            getMovie() {
-
-                axios.get('https://api.themoviedb.org/3/trending/movie/day?api_key=49464736fba80789eb69d1c6a5b65743&page='+this.page)
-                    .then(
-                        response => {
-                            if(this.page > 1){
-                                this.results.push(response.data.results);
-                            }else{
-                                this.results = response.data.results;
-                            }
-                        })
 
             },
 
-            showDetails(data){
-                this.$router.push({name: 'Details', params: { details: data }})
+            showDetails(data) {
+                this.$router.push({
+                    name: 'Details',
+                    params: {
+                        details: data
+                    }
+                })
             }
         },
 
         mounted() {
-            this.getMovie();
-            
+            this.getMovieTrending();
+
         },
+
+        watch: {
+            searchData: function (e) {
+
+                if (e) {
+                    this.resultsTrending = e;
+                }
+
+            },
+
+            genreData: function (e) {
+
+                if (e) {
+                    this.resultsTrending = e;
+                }
+
+            }
+        }
+
     }
 
 </script>

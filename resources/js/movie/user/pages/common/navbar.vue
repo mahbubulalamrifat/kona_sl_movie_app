@@ -10,6 +10,10 @@
 
             <v-toolbar-items class="hidden-sm-and-down">
 
+                <v-btn small plain text link route :to="{ name: 'Dashboard'}" exact>
+                    Home
+                </v-btn>
+
                 <v-btn small plain text link route :to="{ name: 'Trending'}" exact>
                     Trending
                 </v-btn>
@@ -20,7 +24,7 @@
 
 
                 <v-btn small plain text link route :to="{ name: 'Upcoming'}">
-                    Up Coming
+                    UpComing
                 </v-btn>
 
 
@@ -31,7 +35,7 @@
             <v-spacer></v-spacer>
 
             <v-expand-x-transition >
-                <v-text-field v-show="expand" placeholder="search by title" filled dense class="mt-4" v-model="search"></v-text-field>
+                <v-text-field v-show="expand" placeholder="search by title" filled dense class="mt-4" v-model="search" clearable></v-text-field>
             </v-expand-x-transition>
 
             <v-btn icon @click="expand = !expand">
@@ -51,8 +55,8 @@
 
                 </template>
 
-                <v-list dense dark class="nav_color">
-                    <v-list-item @click="signinModal = true">
+                <v-list dense dark>
+                    <v-list-item @click="loginModalFunction()">
                         <v-list-item-title>Signin</v-list-item-title>
                     </v-list-item>
                 </v-list>
@@ -66,7 +70,7 @@
 
 
 
-        <v-navigation-drawer v-model="drawer" absolute temporary dark right height="100%" class="nav_color">
+        <v-navigation-drawer v-model="drawer" absolute temporary dark right height="100%" style="background-color:black;">
 
 
             <v-list dense>
@@ -77,79 +81,33 @@
                     </v-list-item-content>
                 </v-list-item>
 
+                <v-list-item link route :to="{ name: 'Trending'}" exact>
+                    <v-list-item-content>
+                        <v-list-item-title>Trending</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item link route :to="{ name: 'Toprated'}" exact>
+                    <v-list-item-content>
+                        <v-list-item-title>Top Rated</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item link route :to="{ name: 'Upcoming'}" exact>
+                    <v-list-item-content>
+                        <v-list-item-title>Upcoming</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
             </v-list>
         </v-navigation-drawer>
 
 
-        <v-dialog v-model="signinModal" :overlay="false" max-width="500px" transition="dialog-transition">
+        <!-- login modal -->
+        <login-modal v-if="loginModal" :key="loginKey" @openRegister="registerModalFunction()"></login-modal>
 
-            <v-form>
-
-                <v-card class="pb-4">
-                    <v-card-title class="justify-center">
-                        MOVEA Portal
-                    </v-card-title>
-                    <v-card-text>
-                        <!-- Error -->
-                        <v-alert v-if="error" shaped prominent type="error" dismissible>
-                            {{ errorMsg }}
-                        </v-alert>
-
-
-                        <form @submit.prevent="loginMode ? login() : register()">
-
-                            <v-text-field type="text" label="Email" :rules="[v => !!v || 'Email is required!']"
-                                v-model="form.email" prepend-icon="mdi-account-alert-outline" required></v-text-field>
-                            <div v-if="form.errors.has('email')" v-html="form.errors.get('email')" />
-
-
-
-                            <v-text-field :type="passwordType ?'text': 'password'"
-                                :append-icon="passwordType ?'mdi-eye':'mdi-eye-slash'"
-                                @click:append="passwordType=!passwordType" label="Password"
-                                :rules="[v => !!v || 'Password is required!']" v-model="form.password"
-                                prepend-icon="mdi-lock-alert-outline" required></v-text-field>
-                            <div v-if="form.errors.has('password')" v-html="form.errors.get('password')" />
-
-
-                            <v-btn block outlined rounded class="light-blue darken-4 text-white" type="submit" v-if="loginMode = true">
-                                <v-icon dense>
-                                    mdi-login
-                                </v-icon>
-                                Login
-                            </v-btn>
-
-                            <v-btn block outlined rounded class="light-green darken-4 text-white" type="submit" v-else>
-                                <v-icon dense>
-                                    mdi-login
-                                </v-icon>
-                                Register
-                            </v-btn>
-
-                        </form>
-
-                    </v-card-text>
-
-                    <div class="text-center">Not registered yet ? 
-                        <v-btn class="teal--text" text plain small @click="regs()"> 
-                            <v-icon size="16" left>
-                                mdi-account-plus
-                            </v-icon>
-                            Register
-                        </v-btn>
-                    </div>
-                </v-card>
-
-                <v-overlay :value="overlay">
-                    <v-progress-circular
-                        indeterminate
-                        size="64"
-                    ></v-progress-circular>
-                </v-overlay>
-
-            </v-form>
-
-        </v-dialog>
+        <!-- register modal -->
+        <register-modal v-if="registerModal" :key="registerKey" @openLogin="loginModalFunction()"></register-modal>
 
     </div>
 </template>
@@ -158,55 +116,54 @@
 
 
 <script>
-    import Form from 'vform'
-    import auth from '../../js/common/auth'
+import login from "../auth/login.vue"
+import register from "../auth/register.vue"
     export default {
+        components:{
+            "login-modal":login,
+            "register-modal":register
+        },
+
         data() {
             return {
-                signinModal: false,
+                
                 drawer: null,
 
+                loginModal: false,
+                loginKey: 0,
 
-                passwordType: false,
-                loading: false,
-                password: null,
-
-                error: false,
-                errorMsg: '',
-
-
-                // Form
-                form: new Form({
-                    email: '',
-                    password: ''
-                }),
+                registerModal: false,
+                registerKey: 0,
 
                 expand: false,
-                overlay: false,
 
-                loginMode: true,
 
+                
             }
         },
 
 
         methods:{
-            ...auth,
+            loginModalFunction(){
 
+                this.registerModal = false;
+                this.loginModal = true;
+                this.loginKey++;
+                
 
-            regs(){
-                this.loginMode = false
+            },
+
+            registerModalFunction(){
+
+                this.loginModal = false;
+                this.registerModal = true;
+                this.registerKey++;
+                
+
             }
         },
 
         watch: {
-            signinModal: function (e) {
-                if (!e) {
-                    this.form.errors.clear();
-                    this.form.reset();
-                    this.error = false;
-                }
-            }
         },
     }
 
@@ -224,10 +181,6 @@
         background-color: transparent !important;
         text-decoration: none;
         border-bottom: 2px solid #2bed0f;
-    }
-
-    .v-sheet.v-toolbar:not(.v-sheet--outlined) {
-        box-shadow: none;
     }
 
 </style>

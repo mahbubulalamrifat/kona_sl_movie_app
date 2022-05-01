@@ -4,8 +4,10 @@
         <genre-component></genre-component>
 
         <v-row v-scroll="onScroll">
-            <v-col cols="3" lg="3" md="3" v-for="movies in results" :key="movies.id">
-                <v-card @click="showDetails(movies)">
+            <v-col cols="12" lg="3" md="6" sm="6" v-for="movies in resultsUpcoming" :key="movies.id">
+                <v-skeleton-loader class="mx-auto" type="image, card-heading, list-item, list-item-three-line"
+                    v-if="dataFetching == true"></v-skeleton-loader>
+                <v-card @click="showDetails(movies)" v-else>
                     <v-img :src="imagePath+movies.poster_path" height="250"></v-img>
 
                     <v-card-subtitle class="d-flex justify-content-between align-items-center">
@@ -55,22 +57,8 @@ import genre from "../genre.vue"
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
                     
                     this.page += 1;
-                    this.getMovie();
+                    this.getMovieUpcoming();
                 }
-
-            },
-
-            getMovie() {
-
-                axios.get('https://api.themoviedb.org/3/movie/upcoming?api_key=49464736fba80789eb69d1c6a5b65743&page='+this.page)
-                    .then(
-                        response => {
-                            if(this.page > 1){
-                                this.results.push(response.data.results);
-                            }else{
-                                this.results = response.data.results;
-                            }
-                        })
 
             },
 
@@ -80,9 +68,28 @@ import genre from "../genre.vue"
         },
 
         mounted() {
-            this.getMovie();
+            this.getMovieUpcoming();
             
         },
+
+
+        watch:{
+            searchData: function(e){
+
+                if(e){
+                    this.resultsUpcoming = e;
+                }
+                
+            },
+
+            genreData: function(e){
+
+                if(e){
+                    this.resultsUpcoming = e;
+                }
+                
+            }
+        }
     }
 
 </script>

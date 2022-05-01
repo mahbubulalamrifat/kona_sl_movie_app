@@ -4,11 +4,7 @@ import {
 } from 'vuex'
 
 
-import {debounce} from './../../../../helpers'
-
-
-
-
+import { debounce } from './../../../../helpers'
 
 export default {
     data() {
@@ -18,13 +14,19 @@ export default {
 
             imagePath: 'https://image.tmdb.org/t/p/original',
 
-            videoPath: 'https://www.youtube.com/watch?v=',
+            videoPath: 'https://www.youtube.com/embed/',
 
             genres: [],
 
-            results: [],
+            resultsToprated: [],
+            resultsTrending: [],
+            resultsUpcoming: [],
 
             page: 1,
+
+            dataFetching: true,
+
+            genreId: [],
         }
     },
 
@@ -41,22 +43,81 @@ export default {
 
         // getResults
         getResults() {
+            this.dataFetching = true;
             axios.get('https://api.themoviedb.org/3/search/movie?api_key=49464736fba80789eb69d1c6a5b65743&query=' + this.search).then(response => {
-                this.results = response.data.results
 
-                console.log(response)
-            })
+                this.$store.commit('setSearchData', response.data.results);
+
+            });
+            this.dataFetching = false;
         },
 
 
         // getResults
         getResultsByGenre(id) {
-            axios.get('https://api.themoviedb.org/3/discover/movie?api_key=49464736fba80789eb69d1c6a5b65743&&with_genres=' + id).then(response => {
-                this.results = response.data.results
-
-                console.log(response)
+            this.dataFetching = true;
+            this.genreId.push(id);
+            axios.get('https://api.themoviedb.org/3/discover/movie?api_key=49464736fba80789eb69d1c6a5b65743&&with_genres=' + this.genreId).then(response => {
+                
+                this.$store.commit('setGenreData', response.data.results);
             })
-        }
+            this.dataFetching = false;
+        },
+
+        getMovieTrending() {
+            this.dataFetching = true;
+
+            axios.get(
+                    'https://api.themoviedb.org/3/trending/movie/day?api_key=49464736fba80789eb69d1c6a5b65743&page=' +
+                    this.page)
+                .then(
+                    response => {
+                        if (this.page > 1) {
+                            this.resultsTrending.push(...response.data.results);
+                        } else {
+                            this.resultsTrending = response.data.results;
+                        }
+                        this.dataFetching = false;
+                    })
+
+        },
+
+        getMovieToprated() {
+
+            this.dataFetching = true;
+
+            axios.get('https://api.themoviedb.org/3/movie/top_rated?api_key=49464736fba80789eb69d1c6a5b65743&page='+this.page)
+                .then(
+                    response => {
+                        if(this.page > 1){
+                            this.resultsToprated.push(...response.data.results);
+                        }else{
+                            this.resultsToprated = response.data.results;
+                        }
+                    })
+
+            this.dataFetching = false;
+
+        },
+
+
+        getMovieUpcoming() {
+
+            this.dataFetching = true;
+
+            axios.get('https://api.themoviedb.org/3/movie/upcoming?api_key=49464736fba80789eb69d1c6a5b65743&page='+this.page)
+                .then(
+                    response => {
+                        if(this.page > 1){
+                            this.resultsUpcoming.push(...response.data.results);
+                        }else{
+                            this.resultsUpcoming = response.data.results;
+                        }
+                    })
+
+            this.dataFetching = false;
+
+        },
 
 
         // End Methods
@@ -85,7 +146,8 @@ export default {
         // map this.count to store.state.count getLoading 
         ...mapGetters({
             'auth': 'getAuth',
-            'roles': 'getRoles',
+            'searchData': 'getSearchData',
+            'genreData': 'getGenreData',
         }),
 
     },

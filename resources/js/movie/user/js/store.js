@@ -6,8 +6,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 
     state : {
-        auth  : null,
-        roles : null,
+        auth: null,
+        searchData: null,
+        genreData: null,
     },
 
     getters : {
@@ -15,8 +16,13 @@ export default new Vuex.Store({
         getAuth(state){
             return state.auth;
         },
-        getRoles(state){
-            return state.roles;
+        getSearchData(state){
+            return state.searchData;
+            
+        },
+        getGenreData(state){
+            return state.genreData;
+            
         },
     
  
@@ -29,9 +35,12 @@ export default new Vuex.Store({
             state.auth = data;
         },
 
-        // Roles User
-        setRoles(state, data){
-            state.roles = data;
+        setSearchData(state, data){
+            state.searchData = data;
+        },
+
+        setGenreData(state, data){
+            state.genreData = data;
         },
     
     },
