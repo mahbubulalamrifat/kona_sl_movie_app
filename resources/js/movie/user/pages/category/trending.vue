@@ -15,9 +15,13 @@
                         <v-card >
                             <v-img :src="imagePath+movies.poster_path" height="250"></v-img>
 
-                            <v-card-subtitle class="d-flex justify-content-between align-items-center">
-                                <span class="font-weight-bold"> {{movies.title}} </span> <span class="primary--text">
-                                    {{movies.release_date}} </span>
+                            <v-card-title>
+                                <span class="font-weight-bold text-no-wrap"> {{movies.title}} </span>
+                            </v-card-title>
+                            <v-card-subtitle>
+                                <span class="primary--text">
+                                    Release Date: {{movies.release_date}}
+                                </span>
                             </v-card-subtitle>
 
                             <v-card-text>
@@ -47,13 +51,13 @@
                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                         <v-btn @click="showDetails(movies)">View Details</v-btn>
                                         or,
-                                        <v-btn small color="indigo" class="mt-3 white--text" @click="addWatchList(movies)" v-if="userWatchList.findIndex( obj => obj.id === movies.id)">
+                                        <v-btn small color="indigo" class="mt-3 white--text" @click="addWatchList(movies)" >
                                             <v-icon left>mdi-star</v-icon> Add to Watchlist
                                         </v-btn>
 
-                                        <v-btn small color="error" class="mt-3 white--text" @click="removeWatchList(movies)" v-else>
+                                        <!-- <v-btn small color="error" class="mt-3 white--text" @click="removeWatchList(movies)" v-else>
                                             <v-icon left>mdi-star</v-icon> Remove from Watchlist
-                                        </v-btn>
+                                        </v-btn> -->
                                     </div>
                                 </v-overlay>
                             </v-fade-transition>

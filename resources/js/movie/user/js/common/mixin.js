@@ -14,6 +14,10 @@ export default {
             // search
             search: '',
 
+            // from to
+            from_date: '',
+            to_date: '',
+
             // image path
             imagePath: 'https://image.tmdb.org/t/p/original',
 
@@ -65,6 +69,18 @@ export default {
 
             });
             this.dataFetching = false;
+        },
+
+        // search by date range
+        getByDaterange() {
+            if (this.from_date != '' && this.to_date != '') {
+
+                axios.get('https://api.themoviedb.org/3/discover/movie?api_key=49464736fba80789eb69d1c6a5b65743&primary_release_date.gte='+this.from_date+'&primary_release_date.lte='+this.to_date+'').then(response => {
+                    this.$store.commit('setSearchData', response.data.results);
+                })
+                
+            }
+            
         },
 
 
@@ -137,20 +153,14 @@ export default {
         // add to watchlist
         addWatchList(movie) {
             if (this.auth.name) {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Added to Watchlist'
-                });
-                //this.watchItem.push(movie);
-                this.$store.commit('setWatchList', movie);
                 
                 axios.post('/watchlist/store/' + movie.id).then(response => {
-                    // if (response.status == 200) {
-                    //     Toast.fire({
-                    //         icon: 'success',
-                    //         title: 'Added to '
-                    //     });
-                    // }
+                    if (response.status == 200) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Added to Watchlist'
+                        });
+                    }
                 })
             } else {
                 Toast.fire({
@@ -164,21 +174,15 @@ export default {
         // remove from watchlist
         removeWatchList(movie) {
 
-            if (this.userWatchList != null) {
-                const removeIndex = this.userWatchList.findIndex( obj => obj.id === movie.id );
-                this.userWatchList.splice(removeIndex, 1);
-
-
-                axios.delete('/watchlist/remove/' + movie.id).then(response => {
-                    if (response.status == 200) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Removed From Watchlist '
-                        });
-                    }
-                });
-                
-            }
+            axios.delete('/watchlist/remove/' + movie.id).then(response => {
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Removed From Watchlist '
+                    });
+                }
+                this.getWatchList();
+            });
             
         }
 
@@ -201,6 +205,18 @@ export default {
             this.getResults();
             this.$Progress.finish();
         }, 1000),
+
+        from_date: function (value) {
+            this.$Progress.start();
+            this.getByDaterange();
+            this.$Progress.finish();
+        },
+
+        to_date: function (value) {
+            this.$Progress.start();
+            this.getByDaterange();
+            this.$Progress.finish();
+        },
 
     },
 

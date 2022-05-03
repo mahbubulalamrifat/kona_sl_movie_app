@@ -7,6 +7,7 @@ use Session;
 use App\Models\User; 
 use Validator;
 use Illuminate\Support\Str;
+use Hash;
 class IndexController extends Controller 
 {
   

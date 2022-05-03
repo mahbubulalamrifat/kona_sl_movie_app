@@ -34,9 +34,9 @@ class IndexController extends Controller
     }
 
     public function remove(Request $request,$id){
-        $data = Watchlist::where('user_id', Auth::user()->id)->where('movie_id', $id)->get();
-        $success = $data->delete();
-        if($success){
+        $data = Watchlist::where('user_id', Auth::user()->id)->where('movie_id', $id)->delete();
+        //$success = $data->delete();
+        if($data){
             return response()->json(['msg'=>'Remove From Watchlist &#128513;', 'icon'=>'success'], 200);
             
         }

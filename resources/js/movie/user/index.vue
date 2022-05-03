@@ -3,14 +3,14 @@
         <nav-bar></nav-bar>
         <v-main>
             <pre-loader v-if="preloader"></pre-loader>
-            <div class="pa-3">
+            <div class="pa-2 mt-10">
                 <router-view></router-view>
                 <vue-progress-bar></vue-progress-bar>
             </div>
         </v-main>
 
         <!-- Back to top btn -->
-        <v-btn v-scroll="onScroll" v-show="fab" fab dark fixed bottom right color="primary" @click="toTop">
+        <v-btn v-scroll="onScroll" v-show="fab" fab dark fixed bottom right color="primary" @click="toTop" style="z-index:1111">
             <v-icon>keyboard_arrow_up</v-icon>
         </v-btn>
 

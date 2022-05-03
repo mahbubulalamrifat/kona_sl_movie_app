@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-row>
-            <v-col cols="12" lg="3" md="6" sm="6" v-for="movies in userWatchList" :key="movies.id">
+        <v-row v-if="watchData.length>0">
+            <v-col cols="12" lg="3" md="6" sm="6" v-for="movies in watchData" :key="movies.id">
                 <!-- <v-skeleton-loader class="mx-auto" type="image, card-heading, list-item, list-item-three-line"
                     v-if="dataFetching == true">
                 </v-skeleton-loader> -->
@@ -59,12 +59,30 @@
             </v-col>
 
         </v-row>
+
+        <v-main v-else>
+            <v-container fill-height>
+                <v-layout align-center justify-center>
+                    <v-flex class="text-xs-center">
+                        
+                        <v-btn plain text x-large color="error">Browse movie to add in your watchlist</v-btn>
+                        
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-main>
     </div>
 </template>
 
 
 <script>
     export default {
+        data(){
+            return{
+                watchData: [],
+            }
+        },
+
         methods: {
             showDetails(data) {
                 this.$router.push({
@@ -77,14 +95,31 @@
 
 
             getWatchList(){
-                axios.get('/watchlist/index').then(response => {
-                    this.$store.commit('setWatchList', response.data);
-                });
+                    axios.get('/watchlist/index').then(response => {
+                        response.data.forEach(element => {
+
+                            axios.get('https://api.themoviedb.org/3/movie/'+element.movie_id+'?api_key=49464736fba80789eb69d1c6a5b65743&language=en-US').then(res=>{
+                                //console.log(res.data);
+                                this.watchData.push(res.data);
+                            })
+                        });
+                        
+                    });
+                // }
+                
             }
         },
 
         mounted(){
             this.getWatchList();
+        },
+
+        created(){
+            if(!this.authuser){
+                this.$router.push({
+                    name: 'Dashboard',
+                })
+            }
         }
     }
 

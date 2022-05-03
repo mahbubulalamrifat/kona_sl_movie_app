@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-toolbar fixed dark dense class="nav_color">
+        <v-toolbar dark dense class="nav_color fixed-top">
 
             <v-app-bar-title>
                 MOVEA
@@ -8,7 +8,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-toolbar-items class="hidden-sm-and-down">
+            <v-toolbar-items class="hidden-sm-and-down mr-4">
 
                 <v-btn small plain text link route :to="{ name: 'Dashboard'}" exact>
                     Home
@@ -34,19 +34,6 @@
 
 
             </v-toolbar-items>
-
-            <v-spacer></v-spacer>
-            <v-spacer></v-spacer>
-            <v-spacer></v-spacer>
-
-            <v-expand-x-transition >
-                <v-text-field v-show="expand" placeholder="search by title" filled dense class="mt-4" v-model="search" clearable></v-text-field>
-            </v-expand-x-transition>
-
-            <v-btn icon @click="expand = !expand">
-                <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-
 
             <v-btn plain text small v-if="auth.name">{{auth.name}}</v-btn>
 
@@ -112,7 +99,6 @@
                 <v-list-item link route :to="{ name: 'Watchlist'}" exact v-if="auth.name">
                     <v-list-item-content>
                         <v-list-item-title>Watchlist
-                            <v-badge :content="userWatchList.length"></v-badge>
                         </v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
@@ -146,17 +132,9 @@ import register from "../auth/register.vue"
             return {
                 
                 drawer: null,
-
-                //loginModal: false,
                 loginKey: 0,
-
-                //registerModal: false,
                 registerKey: 0,
 
-                expand: false,
-
-
-                
             }
         },
 
@@ -190,7 +168,7 @@ import register from "../auth/register.vue"
 
 <style scoped>
     .nav_color {
-        background-color: transparent !important;
+        background-color: black !important;
     }
 
     .v-btn--active,
