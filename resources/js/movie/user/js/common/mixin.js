@@ -3,34 +3,49 @@ import {
     mapGetters
 } from 'vuex'
 
+import auth from '../../js/common/auth'
+
 
 import { debounce } from './../../../../helpers'
 
 export default {
     data() {
         return {
-
+            // search
             search: '',
 
+            // image path
             imagePath: 'https://image.tmdb.org/t/p/original',
 
+            // videopath        
             videoPath: 'https://www.youtube.com/embed/',
 
+            // all genre
             genres: [],
 
+            
             resultsToprated: [],
             resultsTrending: [],
             resultsUpcoming: [],
 
+            // initial page
             page: 1,
 
             dataFetching: true,
 
+
             genreId: [],
+
+            loginModal: false,
+            registerModal: false,
+
+            watchItem: [],
         }
     },
 
     methods: {
+
+        ...auth,
 
 
         // getGenres
@@ -119,6 +134,54 @@ export default {
 
         },
 
+        // add to watchlist
+        addWatchList(movie) {
+            if (this.auth.name) {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Added to Watchlist'
+                });
+                //this.watchItem.push(movie);
+                this.$store.commit('setWatchList', movie);
+                
+                axios.post('/watchlist/store/' + movie.id).then(response => {
+                    // if (response.status == 200) {
+                    //     Toast.fire({
+                    //         icon: 'success',
+                    //         title: 'Added to '
+                    //     });
+                    // }
+                })
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'You have to login first'
+                });
+            }
+            
+        },
+
+        // remove from watchlist
+        removeWatchList(movie) {
+
+            if (this.userWatchList != null) {
+                const removeIndex = this.userWatchList.findIndex( obj => obj.id === movie.id );
+                this.userWatchList.splice(removeIndex, 1);
+
+
+                axios.delete('/watchlist/remove/' + movie.id).then(response => {
+                    if (response.status == 200) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Removed From Watchlist '
+                        });
+                    }
+                });
+                
+            }
+            
+        }
+
 
         // End Methods
     },
@@ -146,6 +209,7 @@ export default {
         // map this.count to store.state.count getLoading 
         ...mapGetters({
             'auth': 'getAuth',
+            'userWatchList': 'getWatchList',
             'searchData': 'getSearchData',
             'genreData': 'getGenreData',
         }),

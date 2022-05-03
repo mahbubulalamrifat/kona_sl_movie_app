@@ -28,8 +28,13 @@
                 </v-btn>
 
 
+                <v-btn small plain text link route :to="{ name: 'Watchlist'}" v-if="auth.name">
+                    Watchlist
+                </v-btn>
+
 
             </v-toolbar-items>
+
             <v-spacer></v-spacer>
             <v-spacer></v-spacer>
             <v-spacer></v-spacer>
@@ -43,9 +48,9 @@
             </v-btn>
 
 
+            <v-btn plain text small v-if="auth.name">{{auth.name}}</v-btn>
 
-
-            <v-menu open-on-hover offset-y transition="scale-transition">
+            <v-menu open-on-click offset-y transition="scale-transition">
 
                 <template v-slot:activator="{ on, attrs }">
 
@@ -56,7 +61,12 @@
                 </template>
 
                 <v-list dense dark>
-                    <v-list-item @click="loginModalFunction()">
+                    
+                    <v-list-item @click="logout()" v-if="auth.name">
+                        <v-list-item-title>Logout</v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item @click="loginModalFunction()" v-else>
                         <v-list-item-title>Signin</v-list-item-title>
                     </v-list-item>
                 </v-list>
@@ -99,6 +109,14 @@
                     </v-list-item-content>
                 </v-list-item>
 
+                <v-list-item link route :to="{ name: 'Watchlist'}" exact v-if="auth.name">
+                    <v-list-item-content>
+                        <v-list-item-title>Watchlist
+                            <v-badge :content="userWatchList.length"></v-badge>
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
             </v-list>
         </v-navigation-drawer>
 
@@ -129,10 +147,10 @@ import register from "../auth/register.vue"
                 
                 drawer: null,
 
-                loginModal: false,
+                //loginModal: false,
                 loginKey: 0,
 
-                registerModal: false,
+                //registerModal: false,
                 registerKey: 0,
 
                 expand: false,

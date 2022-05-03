@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 
     state : {
-        auth: null,
+        auth: [],
+        watchList: [],
         searchData: null,
         genreData: null,
     },
@@ -15,6 +16,9 @@ export default new Vuex.Store({
 
         getAuth(state){
             return state.auth;
+        },
+        getWatchList(state){
+            return state.watchList;
         },
         getSearchData(state){
             return state.searchData;
@@ -33,6 +37,11 @@ export default new Vuex.Store({
         // Auth User
         setAuth(state, data){
             state.auth = data;
+        },
+
+        setWatchList(state, data) {
+            
+            state.watchList.push(data);
         },
 
         setSearchData(state, data){

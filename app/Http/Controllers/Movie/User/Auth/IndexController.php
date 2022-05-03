@@ -1,56 +1,65 @@
 <?php
-
 namespace App\Http\Controllers\Movie\User\Auth;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-
-class IndexController extends Controller
+use Illuminate\Http\Request; 
+use App\Http\Controllers\Controller; 
+use Illuminate\Support\Facades\Auth;
+use Session;
+use App\Models\User; 
+use Validator;
+use Illuminate\Support\Str;
+class IndexController extends Controller 
 {
-    //login
-    public function login(Request $request){
-            
-        // Validations
-        request()->validate([
-            'email' => 'required|string',
-            'password' => 'required|string|max:20',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if(!Hash::check($password, $user->password)){
-            return response()->json([
-                'msg' => 'Invalid Credential !!'
-            ], 422);
-        }else{
-            return response()->json($response, 200);
+  
+    private $apiToken;
+    public function __construct()
+        {
+        $this->apiToken = uniqid(base64_encode(Str::random(40)));
         }
+    /** 
+     * 
+     * @return \Illuminate\Http\Response 
+     */ 
+    
 
+    public function login(Request $request){
 
-
-        
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+            $user = Auth::user(); 
+            //Setting login response 
+            $success['token'] = $this->apiToken;
+            $success['name'] =  $user->name;
+            return response()->json([
+                'status' => 'success',
+                'data' => $success,
+                'msg'=>'You are logged in'
+            ],200); 
+        } else { 
+            return response()->json([
+                'status' => 'error',
+                'data' => 'Unauthorized Access',
+                'msg'=>'Invalid Credential'
+            ],422); 
+        }
 
     }
 
-
-
-    //registration
+  //registration
     public function register(Request $request){
             
         // Validations
-        request()->validate([
+
+        $this->validate($request,[
             'email' => 'required|email|unique:users',
             'password' => 'required|string|max:20',
+            'username' => 'required|string|max:20',
         ]);
 
         $data = new user();
 
-        $data->$email      = $request->email;
-        $data->$password   = Hash::make($request->password);
-        $success            = $data->save();
+        $data->email      = $request->email;
+        $data->password   = Hash::make($request->password);
+        $data->name       = $request->username;
+        $success           = $data->save();
 
         if($success){
             return response()->json(['msg'=>'Registered Successfully &#128513;', 'icon'=>'success'], 200);
@@ -60,5 +69,18 @@ class IndexController extends Controller
             ], 422);
         }
 
+    }
+
+
+
+  // logout
+    public function logout(){
+        Session::flush();
+        Auth::logout();
+
+        return response()->json([
+            'status' => 'success',
+            'msg'=>'Successfully logout'
+        ],200); 
     }
 }

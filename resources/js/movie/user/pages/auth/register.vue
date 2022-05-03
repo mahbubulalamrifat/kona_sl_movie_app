@@ -18,10 +18,14 @@
 
                         <form @submit.prevent="register()">
 
-                            <v-text-field type="text" label="Email" :rules="[v => !!v || 'Email is required!']"
+                            <v-text-field type="text" label="Uername" :rules="[v => !!v || 'Uername is required!']"
+                                v-model="form.username" prepend-icon="mdi-account-alert-outline" required></v-text-field>
+                            <div v-if="form.errors.has('username')" v-html="form.errors.get('username')" />
+
+
+                            <v-text-field type="email" label="Email" :rules="[v => !!v || 'Email is required!']"
                                 v-model="form.email" prepend-icon="mdi-account-alert-outline" required></v-text-field>
                             <div v-if="form.errors.has('email')" v-html="form.errors.get('email')" />
-
 
 
                             <v-text-field :type="passwordType ?'text': 'password'"
@@ -72,7 +76,6 @@
 
 <script>
     import Form from 'vform'
-    import auth from '../../js/common/auth'
     export default {
         data() {
             return {
@@ -90,18 +93,13 @@
                 // Form
                 form: new Form({
                     email: '',
-                    password: ''
+                    password: '',
+                    username: '',
                 }),
 
                 overlay: false,
 
             }
-        },
-
-
-        methods:{
-            
-            ...auth,
         },
 
         watch: {

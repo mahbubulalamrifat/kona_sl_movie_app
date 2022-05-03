@@ -1,35 +1,64 @@
+import axios from "axios";
+
 export default {
     // Login
     login() {
         this.overlay = true
         this.form.post('/auth/login').then(response => {
 
-            // Error
-            if (resData.status == 'error') {
-                console.log(resData)
-                this.error = true
-                this.errorMsg = resData.msg
-
+            if (response.status == 200) {
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.msg
+                });
             }
 
-            // Success
-            if (resData.status == 'success') {
-                console.log(resData)
-                this.error = false
-
-            }
-
-            this.overlay = false
+            this.overlay = false;
+            this.loginModal = false;
+            location.reload();
 
         }).catch(error => {
             this.overlay = false;
+            console.log(error.msg)
+
+            Toast.fire({
+                icon: 'error',
+                title: 'Invalid Credentials'
+            });
+            
         })
     },
 
 
     register() {
+        this.overlay = true;
         this.form.post('/auth/register').then(response => {
             console.log(response);
+
+            if (response.status == 200) {
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.msg
+                });
+            }
+            this.overlay = false;
+            this.registerModal = false;
+            location.reload();
+        })
+    },
+
+
+    logout() {
+        axios.post('/auth/logout').then(response => {
+            if (response.status == 200) {
+                Toast.fire({
+                    icon: 'success',
+                    title: response.data.msg
+                });
+            }
+
+            location.reload();
+
         })
     }
 }

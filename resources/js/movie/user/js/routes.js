@@ -9,6 +9,7 @@ import Toprated from '../pages/category/toprated.vue'
 import Upcoming from '../pages/category/upcoming.vue'
 
 import Details from '../pages/movieDetails.vue'
+import Watchlist from '../pages/common/watchlist.vue'
 import er404 from '../pages/common/404.vue'
 
 
@@ -58,6 +59,15 @@ const router = new VueRouter({
             name: 'Details',
             meta:{
                 title: 'Movie for Enthusias -- Details',
+            },   
+        },
+
+        { 
+            path: '/watchlist', 
+            component: Watchlist,
+            name: 'Watchlist',
+            meta:{
+                title: 'Movie for Enthusias -- Watchlist',
             },   
         },
        

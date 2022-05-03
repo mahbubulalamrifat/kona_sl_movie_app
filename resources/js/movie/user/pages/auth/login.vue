@@ -72,7 +72,7 @@
 
 <script>
     import Form from 'vform'
-    import auth from '../../js/common/auth'
+    
     export default {
         data() {
             return {
@@ -96,13 +96,7 @@
 
             }
         },
-
-
-        methods:{
-            
-            ...auth,
-        },
-
+        
         watch: {
             signinModal: function (e) {
                 if (!e) {

@@ -4,7 +4,7 @@
             
             <div v-for="genre in genres" :key="genre.id">
                 <v-btn-toggle multiple class="mx-2 my-2" outlined rounded color="red">
-                    <v-btn small outlined rounded class="error--text" @click="getResultsByGenre(genre.id)">
+                    <v-btn small outlined color="red" rounded @click="getResultsByGenre(genre.id)">
                         {{genre.name}}
                     </v-btn>
                 </v-btn-toggle>
